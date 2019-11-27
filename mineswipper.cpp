@@ -4,17 +4,17 @@
 #include "time.h"
 #include "stdlib.h"
 
-#define FIELD_HEIGHT 9
-#define FIELD_WIDTH 9
-#define MINES 10
+#define FIELD_HEIGHT 4
+#define FIELD_WIDTH 4
+#define MINES 1
 
 int mines_place[MINES][2];
 int bombs_around[FIELD_HEIGHT+1][FIELD_WIDTH+1];
 int FIELD[FIELD_HEIGHT+1][FIELD_WIDTH+1];
 
-char h_axis[FIELD_WIDTH+1] = {
-	' ','a','b','c','d','e','f','g','h','i'
-};
+int bombsCount = 0;
+
+char h_axis[FIELD_WIDTH+1] = {};
 
 void defaultFieldSet(){
 	for (int i = 1;i <= FIELD_HEIGHT;i++) {
@@ -22,13 +22,31 @@ void defaultFieldSet(){
 			FIELD[i][j]=0;
 		}
 	}
+
+	for(int i=1;i<=FIELD_WIDTH;i++){
+		char tmp = (char)i+96;
+		h_axis[i]=tmp;
+	}
+}
+
+void BombsCount(){
+	bombsCount=0;
+	for(int i=1;i<=FIELD_HEIGHT;i++){
+		for(int j=1;j<=FIELD_WIDTH;j++){
+			if(FIELD[i][j]==-11){
+				bombsCount++;
+			}
+		}
+	}
+	printf("\nMINES %d / %d\n",bombsCount,MINES);
 }
 
 void disp() {
+	BombsCount();
 	for (int i = 0;i <= FIELD_HEIGHT;i++) {
 		for (int j = 0;j <= FIELD_WIDTH;j++) {
 			if (i == 0 && j == 0) {
-				printf("%4c", 0);
+				printf("%5c", 0);
 			}
 			else if (i == 0 && j>0) {
 				printf("%4c", j + 96);
@@ -57,6 +75,7 @@ void disp() {
 			}
 		}
 	}
+	printf("\n\n\n\n");
 }
 
 void mineDisp() {
@@ -120,8 +139,6 @@ void mineMapDash() {
 int SearchBomb(int x,int y){
 	int num =0; 
 	for (int i=0;i<MINES;i++){
-		// CountBombs(&num,x-1,y-1);
-		//
 		if(x>1){
 			if(y>1){
 				if(x-1==mines_place[i][0] && y-1==mines_place[i][1]){
@@ -166,18 +183,8 @@ int SearchBomb(int x,int y){
 	return num;
 }
 
-// void CountBombs(*int num,int x,int y){
-// 	for(int i=0;i<MINES;i++){
-// 		if(x==mines_place[i][0]&&y==mines_place[k][1]){
-// 			*num++;
-// 		}
-// 	}
-// }
-
 void dfs(int x,int y){
 	FIELD[y][x]=bombs_around[y][x]+2;
-
-	disp();
 
 	for(int dx=-1;dx<=1;dx++){
 		for(int dy=-1;dy<=1;dy++){
@@ -197,40 +204,63 @@ void dfs(int x,int y){
 		}
 	}
 	return;
-	// if(x>1){
-	// 	if(y>1){
-	// 		if(x-1==mines_place[i][0] && y-1==mines_place[i][1]){
-	// 		}
-	// 	}
-	// 	if(x-1==mines_place[i][0] && y==mines_place[i][1]){
-	// 	}
-	// 	if(y<FIELD_HEIGHT){
-	// 		if(x-1==mines_place[i][0] && y+1==mines_place[i][1]){
-	// 		}
-	// 	}
-	// }
-	// if(y>1){
-	// 	if(x==mines_place[i][0] && y-1==mines_place[i][1]){
-	// 	}
-	// }
-	// if(y<FIELD_HEIGHT){
-	// 	if(x==mines_place[i][0] && y+1==mines_place[i][1]){
-	// 	}
-	// }
-	// if(x<FIELD_WIDTH){
-	// 	if(y>1){
-	// 		if(x+1==mines_place[i][0] && y-1==mines_place[i][1]){
-	// 		}
-	// 	}
-	// 	if(x+1==mines_place[i][0] && y==mines_place[i][1]){
-	// 	}
-	// 	if(y<FIELD_HEIGHT){
-	// 		if(x+1==mines_place[i][0] && y+1==mines_place[i][1]){
-	// 		}
-	// 	}
-	// }
 }
 
+void dispAns(){
+	for (int i = 0;i <= FIELD_HEIGHT;i++) {
+		for (int j = 0;j <= FIELD_WIDTH;j++) {
+			if (i == 0 && j == 0) {
+				printf("%4c", 0);
+			}
+			else if (i == 0 && j>0) {
+				printf("%4c", j + 96);
+			}
+			else if (j == 0 && i>0) {
+				printf("%4d",i);
+			}
+			else {
+				printf("%4d",bombs_around[i][j]);
+			}
+
+			if (j == FIELD_WIDTH) {
+				printf("\n\n");
+			}
+		}
+	}
+}
+
+bool CompareBombsAns(){
+	int count=0;
+	for (int i=1;i<=FIELD_HEIGHT;i++){
+		for(int j=1;j<=FIELD_WIDTH;j++){
+			if(FIELD[i][j]==-11){
+				for(int k=0;k<MINES;k++){
+					if(i==mines_place[k][0] && j==mines_place[k][1]){
+						break;
+					}
+				}
+				count++;
+			}
+		}
+	}
+
+	if(count!=MINES){
+		return false;
+	}
+	return true;
+}
+
+bool IsFull(){
+	for(int i=1;i<=FIELD_HEIGHT;i++){
+		for(int j=1;j<=FIELD_WIDTH;j++){
+			if(FIELD[i][j]==0){
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
 
 int main()
 {
@@ -263,7 +293,7 @@ int main()
 	}
 
 	//真真真真
-	printf("bombs around\n");
+	//bombs set to bombs_around from mines_place
 	int temp_flag=0;
 	for (int i = 1;i <= FIELD_HEIGHT;i++) {
 		for (int j = 1;j <= FIELD_WIDTH;j++) {
@@ -276,17 +306,12 @@ int main()
 			}
 			bombs=SearchBomb(j,i);
 A:
-			// printf("%4d",bombs);
 			bombs_around[i][j]=bombs;
-
-			// if(j==FIELD_WIDTH){
-			// 	printf("\n\n");
-			// }
 		}
 	}
 
 	
-	printf("hogei\n");
+	printf("answer\n");
 	for(int i=1;i<=FIELD_HEIGHT;i++){
 		for(int j=1;j<=FIELD_WIDTH;j++){
 			printf("%4d",bombs_around[i][j]);
@@ -303,43 +328,49 @@ A:
 		char str;
 		scanf("%d %c", &v_num,&str);
 
-		h_num=int(str)-96;
+		if(int(str)>=97 && int(str)<=97+FIELD_WIDTH){
+			h_num=int(str)-96;
 
-		printf("h_num : %d\n",h_num);
-		// for(int i=0;i<MINES;i++){
-		// 	if(v_num==mines_place[i][1] && h_num==mines_place[i][0]){
-		// 		printf("GAME OVER!!\n");
-		// 		return 0;
-		// 	}
-		// }
-		// 
-		printf("%d\n",bombs_around[v_num][h_num]);
-
-		switch(bombs_around[v_num][h_num]){
-			case 10:{
-				printf("\n\nGAME OVER!!\n\n");
-				return 0;
-			}
-			case 0:{
-				dfs(h_num,v_num);
-				// ChainOpen(h_num,v_num);
-			}
-			default:{
-				// FIELD[v_num][h_num]=bombs_around[v_num][h_num];
-				FIELD[v_num][h_num]=bombs_around[v_num][h_num]+2;
+			switch(bombs_around[v_num][h_num]){
+				case 10:{
+					printf("\n\nGAME OVER!!\n\n");
+					printf("THE ANSWER IS\n");
+					dispAns();
+					return 0;
+				}
+				case 0:{
+					dfs(h_num,v_num);
+				}
+				default:{
+					FIELD[v_num][h_num]=bombs_around[v_num][h_num]+2;
+				}
 			}
 		}
 
-		
-		printf("%d %c\n", v_num, str);
-		printf("%d %d\n",bombs_around[v_num][h_num],FIELD[v_num][h_num]);
+		if(int(str)>=65 && int(str)<=73+FIELD_WIDTH){
+			h_num=int(str)-64;
+
+			if(FIELD[v_num][h_num]==-11){
+				FIELD[v_num][h_num]=0;
+			}else{
+				FIELD[v_num][h_num]=-11;
+			}
+		}
+
+		if(IsFull()){
+			if(CompareBombsAns()){
+				printf("YOU ARE WIN!!\n");
+				dispAns();
+				return 0;
+			}
+			printf("YOU ARE WRONG!\nYOUR ANSWER IS\n");
+			disp();
+
+			printf("THE ANSWER IS \n");
+			dispAns();
+			return 0;
+		};
+
 		disp();
 	}
 }
-
-//bool IsOK(int mines_place[MINES][2], int temp[2]) {
-//bool isOK(int temp[2]){
-//	printf("%d %d\n", temp[0], temp[1]);
-//	return true;
-//}
-
