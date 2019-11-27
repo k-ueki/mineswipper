@@ -32,9 +32,19 @@ void disp() {
 			}
 			else if (i == 0 && j>0) {
 				printf("%4c", j + 96);
+				// if(j==FIELD_WIDTH){
+				// 	printf("\n");
+				// 	for(int k=0;k<=FIELD_WIDTH;k++){
+				// 		if(k==0){
+				// 			printf("    ");
+				// 		}
+				// 		printf("____");
+				// 	}
+				// }
 			}
 			else if (j == 0 && i>0) {
-				printf("%4d", i);
+				// printf("%2d |", i);
+				printf("%4d",i);
 			}
 			else {
 				printf("%4c",FIELD[i][j]+46);
@@ -42,6 +52,7 @@ void disp() {
 			}
 
 			if (j == FIELD_WIDTH) {
+				// printf("\n   |\n");
 				printf("\n\n");
 			}
 		}
@@ -163,6 +174,63 @@ int SearchBomb(int x,int y){
 // 	}
 // }
 
+void dfs(int x,int y){
+	FIELD[y][x]=bombs_around[y][x]+2;
+
+	disp();
+
+	for(int dx=-1;dx<=1;dx++){
+		for(int dy=-1;dy<=1;dy++){
+			int nx = x+dx,ny=y+dy;
+
+			if(dx==0&&dy==0){
+				continue;
+			}
+			
+			if(1<=nx && nx<=FIELD_WIDTH && 1<=ny && ny<=FIELD_HEIGHT){
+				if(bombs_around[ny][nx]==0 && FIELD[ny][nx]==0){
+					dfs(nx,ny);
+				}else{
+					FIELD[ny][nx]=bombs_around[ny][nx]+2;
+				}
+			}
+		}
+	}
+	return;
+	// if(x>1){
+	// 	if(y>1){
+	// 		if(x-1==mines_place[i][0] && y-1==mines_place[i][1]){
+	// 		}
+	// 	}
+	// 	if(x-1==mines_place[i][0] && y==mines_place[i][1]){
+	// 	}
+	// 	if(y<FIELD_HEIGHT){
+	// 		if(x-1==mines_place[i][0] && y+1==mines_place[i][1]){
+	// 		}
+	// 	}
+	// }
+	// if(y>1){
+	// 	if(x==mines_place[i][0] && y-1==mines_place[i][1]){
+	// 	}
+	// }
+	// if(y<FIELD_HEIGHT){
+	// 	if(x==mines_place[i][0] && y+1==mines_place[i][1]){
+	// 	}
+	// }
+	// if(x<FIELD_WIDTH){
+	// 	if(y>1){
+	// 		if(x+1==mines_place[i][0] && y-1==mines_place[i][1]){
+	// 		}
+	// 	}
+	// 	if(x+1==mines_place[i][0] && y==mines_place[i][1]){
+	// 	}
+	// 	if(y<FIELD_HEIGHT){
+	// 		if(x+1==mines_place[i][0] && y+1==mines_place[i][1]){
+	// 		}
+	// 	}
+	// }
+}
+
 
 int main()
 {
@@ -208,12 +276,12 @@ int main()
 			}
 			bombs=SearchBomb(j,i);
 A:
-			printf("%4d",bombs);
+			// printf("%4d",bombs);
 			bombs_around[i][j]=bombs;
 
-			if(j==FIELD_WIDTH){
-				printf("\n\n");
-			}
+			// if(j==FIELD_WIDTH){
+			// 	printf("\n\n");
+			// }
 		}
 	}
 
@@ -253,6 +321,8 @@ A:
 				return 0;
 			}
 			case 0:{
+				dfs(h_num,v_num);
+				// ChainOpen(h_num,v_num);
 			}
 			default:{
 				// FIELD[v_num][h_num]=bombs_around[v_num][h_num];
