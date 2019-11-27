@@ -50,90 +50,20 @@ void disp() {
 			}
 			else if (i == 0 && j>0) {
 				printf("%4c", j + 96);
-				// if(j==FIELD_WIDTH){
-				// 	printf("\n");
-				// 	for(int k=0;k<=FIELD_WIDTH;k++){
-				// 		if(k==0){
-				// 			printf("    ");
-				// 		}
-				// 		printf("____");
-				// 	}
-				// }
 			}
 			else if (j == 0 && i>0) {
-				// printf("%2d |", i);
 				printf("%4d",i);
 			}
 			else {
 				printf("%4c",FIELD[i][j]+46);
-				// printf("%4c", 46);
 			}
 
 			if (j == FIELD_WIDTH) {
-				// printf("\n   |\n");
 				printf("\n\n");
 			}
 		}
 	}
 	printf("\n\n\n\n");
-}
-
-void mineDisp() {
-	for (int i = 1;i <= FIELD_WIDTH;i++) {
-		for (int j = 1;j <= FIELD_HEIGHT;j++) {
-			for (int k = 0;k < MINES;k++) {
-				printf("%d %d\n", mines_place[k][0], mines_place[k][1]);
-				if (i == mines_place[k][0] && j == mines_place[k][1]) {
-					printf("%4d", 1);
-				}
-			}
-		}
-	}
-}
-
-void mineMapDisp() {
-	int flag;
-	for (int j = 1;j <= FIELD_HEIGHT;j++) {
-		for (int i = 1;i <= FIELD_WIDTH;i++) {
-			flag = 0;
-			for (int k = 0;k < MINES;k++) {
-				if (i == mines_place[k][0] && j == mines_place[k][1]) {
-					printf("%4d", 1);
-					flag = 1;
-					break;
-				}
-			}
-			if (flag == 0) {
-				printf("%4c",0);
-			}
-			if (i == FIELD_WIDTH) {
-				printf("\n\n");
-			}
-			if (flag == 1) {
-				continue;
-			}		
-		}
-	}
-}
-
-void mineMapDash() {
-	for (int i = 1;i <= FIELD_WIDTH;i++) {
-		for (int j = 1;j <= FIELD_HEIGHT;j++) {
-			printf("HHHHHHHHHHHHHHHHHHHH %4d %4d\n", i, j);
-			for (int k = 0;k < MINES;k++) {
-				printf("MINE %4d %4d\n", mines_place[k][0], mines_place[k][1]);
-				if (i == mines_place[k][0] && j == mines_place[k][1]) {
-					printf("%4d\n", 1);
-					break;
-				}
-			}
-
-
-			if (j == FIELD_HEIGHT) {
-				printf("\n\n");
-			}
-		}
-	}
 }
 
 int SearchBomb(int x,int y){
@@ -272,9 +202,6 @@ int main()
 	int temp = 1;
 	for (int i = 0;i < MINES;i++) {
 		
-		//mines_place[i][0]= rand() % FIELD_WIDTH + 1;
-		//mines_place[i][1]=rand() % FIELD_HEIGHT + 1;
-		//printf("%d %d\n",mines_place[i][0],mines_place[i][1]);
 		int x = rand() % FIELD_WIDTH + 1;
 		int y = rand() % FIELD_HEIGHT + 1;
 
@@ -284,12 +211,7 @@ int main()
 				mines_place[i][1] = y;
 			}
 		}
-		
-		//bool tmtm = isOK(temp);
-		//printf("%d", tmtm);
 		temp++;
-
-		
 	}
 
 	//真真真真
@@ -321,7 +243,6 @@ A:
 		}
 	}
 
-	// mineMapDisp();
 
 	while(1) {
 		int v_num,h_num;
@@ -370,7 +291,6 @@ A:
 			dispAns();
 			return 0;
 		};
-
 		disp();
 	}
 }
