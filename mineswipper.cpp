@@ -246,20 +246,30 @@ int main()
 	disp();
 
 	srand((unsigned)time(NULL));
-	int temp = 1;
-	for (int i = 0;i < MINES;i++) {
+	int tempBombs = 1;
+	for (int i = 0;i<MINES;i++) {
+	// for (int i = 0;;i++) {
 		
+RAND:
 		int x = rand() % FIELD_WIDTH + 1;
 		int y = rand() % FIELD_HEIGHT + 1;
 
-		for (int j = 0;j < temp;j++) {
-			if (mines_place[j][0] != x && mines_place[j][1] != y) {
+		for (int j = 0;j < tempBombs;j++) {
+			if (mines_place[j][0] == x && mines_place [j][1] == y){
+				goto RAND;
+			}
+			if (mines_place[j][0] != x && mines_place[j][1] != y && j == tempBombs-1) {
 				mines_place[i][0] = x;
 				mines_place[i][1] = y;
 			}
 		}
-		temp++;
+
+		if(tempBombs==MINES){
+			break;
+		}
+		tempBombs++;
 	}
+	printf("bombs : %d\n",tempBombs);
 
 	//真真真真
 	//bombs set to bombs_around from mines_place
