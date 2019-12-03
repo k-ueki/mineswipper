@@ -4,9 +4,9 @@
 #include "time.h"
 #include "stdlib.h"
 
-#define FIELD_HEIGHT 9
-#define FIELD_WIDTH 9
-#define MINES 10
+#define FIELD_HEIGHT 3
+#define FIELD_WIDTH 3
+#define MINES 1
 
 int mines_place[MINES][2];
 int bombs_around[FIELD_HEIGHT+1][FIELD_WIDTH+1];
@@ -239,8 +239,33 @@ void dispLoose(){
 	}
 }
 
+void dispTime(time_t start){
+	int min,sec;
+	time_t clearTime;
+	clearTime = time(NULL)-start;
+
+	min = clearTime / 60;
+	sec = clearTime % 60;
+
+	if(min!=0){
+		printf("######################\n");
+		printf("######################\n");
+		printf("time : %d min %d sec\n",min,sec);
+		printf("######################\n");
+		printf("######################\n");
+	}else{
+		printf("######################\n");
+		printf("######################\n");
+		printf("time : %d sec\n",sec);
+		printf("######################\n");
+		printf("######################\n");
+	}
+}
+
 int main()
 {
+	time_t start,end;
+	start = time(NULL);
 
 	defaultFieldSet();
 	disp();
@@ -290,15 +315,15 @@ A:
 	}
 
 	
-	printf("answer\n");
-	for(int i=1;i<=FIELD_HEIGHT;i++){
-		for(int j=1;j<=FIELD_WIDTH;j++){
-			printf("%4d",bombs_around[i][j]);
-			if(j==FIELD_WIDTH){
-				printf("\n\n");
-			}
-		}
-	}
+	// printf("answer\n");
+	// for(int i=1;i<=FIELD_HEIGHT;i++){
+	// 	for(int j=1;j<=FIELD_WIDTH;j++){
+	// 		printf("%4d",bombs_around[i][j]);
+	// 		if(j==FIELD_WIDTH){
+	// 			printf("\n\n");
+	// 		}
+	// 	}
+	// }
 
 
 	while(1) {
@@ -337,8 +362,10 @@ A:
 
 		if(IsFull()){
 			if(CompareBombsAns()){
+				end = clock();
 				dispWin();
 				dispAns();
+				dispTime(start);
 				return 0;
 			}
 			dispLoose();
